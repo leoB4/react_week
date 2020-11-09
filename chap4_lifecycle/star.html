@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- babel => compilation du JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading {
+            color: purple;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        
+        class Line extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    star : '',
+                    count : 20
+                }
+            }
+
+            componentDidMount() {
+                if(this.props.life){
+                    this.showStar();  
+                } 
+            }
+
+            componentDidUpdate(prevProps, prevStates){
+                if( this.props.life != prevProps.life ){
+                    if(this.props.life === true){
+                        this.showStar();
+                    } 
+                }
+            }
+
+            showStar(){
+                const interval = setInterval(()=>{
+                    if( this.state.count > 0 )
+                        this.setState({
+                            star : this.state.star + ' x ',
+                            count : this.state.count - 1
+                        });
+                    else
+                        clearInterval(interval);
+                }, 50);
+            }
+
+            render() {  
+                const { star } = this.state;
+                return (
+                    <div>
+                        {star}
+                    </div>
+                );
+            }
+        }
+
+        class App extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    life : false,
+                    count : 1
+                }
+            }
+
+            componentDidMount() {
+              const interval = setInterval(()=>{
+                if( this.state.count == 10 ){
+                    clearInterval(interval);
+                }else{
+                    this.setState({
+                        count : this.state.count + 1
+                        });
+                }
+                },20 * 50 );
+            }
+
+            render() {
+
+                const { count } = this.state;
+                return (
+                    <div className="container">
+                        { numbers.map( number => (
+                            <Line key={number} life={ number == count } />
+                            )  
+                        )}
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+       
+    </script>
+</body>
+
+</html>
