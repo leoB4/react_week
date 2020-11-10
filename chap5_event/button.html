@@ -25,7 +25,8 @@
 
                 this.state = {
                     count : 0,
-                    isClicked : false
+                    isClicked : false,
+                    displayReset : false
                 }
 
                 this.start = this.start.bind(this);
@@ -39,7 +40,7 @@
 
                 clearInterval(this.interval);
 
-                this.setState({ isClicked : true});
+                this.setState({ isClicked : true, displayReset : true});
 
                 this.interval = setInterval(() =>{
                     if(this.state.count >= this.props.maxCount) {
@@ -50,12 +51,12 @@
                     this.setState({
                         count : (this.state.count + this.props.step)
                     })
-                }, 1000);
+                }, 500);
             }
 
             reset(){
                 clearInterval(this.interval);
-                this.setState({ count : 0, isClicked : false});
+                this.setState({ count : 0, isClicked : false, displayReset : false});
             }
 
             stop() {
@@ -64,7 +65,7 @@
             }
 
             render() {
-                const { count, isCliked } = this.state;
+                const { count, isClicked } = this.state;
                 const { step } = this.props;
 
                 return (
@@ -72,13 +73,11 @@
                         <button onClick={this.start} disabled={isClicked}>
                             Start + { step } 
                         </button>
-                        <button onClick={this.stop} disabled={!isCliked}>
+                        <button onClick={this.stop} disabled={!isClicked}>
                             Stop
                         </button>
-                       
-                        <button onClick={this.reset}>
-                           Reset 
-                        </button>
+                
+                        {this.state.displayReset && <button onClick={this.reset}>Reset</button>}
                         <div>{count}</div>
                     </div>
                 );
@@ -92,7 +91,7 @@
 
                 return (
                     <div>
-                        <Counter step={1} max={20} />
+                        <Counter step={1} maxCount={20} />
                     </div>
                 )
             }
