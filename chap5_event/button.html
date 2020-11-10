@@ -18,6 +18,82 @@
     <div id="root"></div>
     <script type="text/babel">
 
+        class CounterBinary extends React.Component {
+            constructor(props) {
+                super(props);
+
+                this.state = {
+                    count : 0,
+                    isClicked : false,
+                    displayReset : false
+                }
+
+                this.start = this.start.bind(this);
+                this.stop = this.stop.bind(this);
+                this.reset = this.reset.bind(this);
+
+                this.interval = null;
+            }
+
+            start() {
+
+                clearInterval(this.interval);
+
+                this.setState({ isClicked : true, displayReset : true});
+
+                this.interval = setInterval(() =>{
+                    if(this.state.count >= this.props.maxCount) {
+                        if( this.props.cycle && this.props.cycle === true ){
+                            this.reset();
+                            this.start();
+
+                            return;
+                        }
+                        this.reset();
+                        return;
+                    }
+
+                    this.setState({
+                        count : (this.state.count + this.props.step)
+                    })
+                }, 500);
+            }
+
+            conversion(num) {
+                return parseInt(num, 10).toString(2);
+            }
+
+            reset(){
+                clearInterval(this.interval);
+                this.setState({ count : 0, isClicked : false, displayReset : false});
+            }
+
+            stop() {
+                clearInterval(this.interval);
+                this.setState({ isClicked : false});
+            }
+
+            render() {
+                const { count, isClicked } = this.state;
+                const { step } = this.props;
+
+                return (
+                    <div>
+                        <button onClick={this.start} disabled={isClicked}>
+                            Start + { step } 
+                        </button>
+                        <button onClick={this.stop} disabled={!isClicked}>
+                            Stop
+                        </button>
+                        {this.state.displayReset && <button onClick={this.reset}>Reset</button>}
+
+                        <div>{this.conversion(count)}</div>
+                    </div>
+                );
+            }
+        }
+
+
         class Counter extends React.Component {
 
             constructor(props) {
@@ -44,6 +120,14 @@
 
                 this.interval = setInterval(() =>{
                     if(this.state.count >= this.props.maxCount) {
+
+                        if( this.props.cycle && this.props.cycle === true ){
+                            this.reset();
+                            this.start();
+
+                            return;
+                        }
+
                         this.reset();
                         return;
                     }
@@ -92,6 +176,8 @@
                 return (
                     <div>
                         <Counter step={1} maxCount={20} />
+                        <Counter step={1} maxCount={20} cycle={true} />
+                        <CounterBinary step={"1"} maxCount={20} cycle={true} />
                     </div>
                 )
             }
