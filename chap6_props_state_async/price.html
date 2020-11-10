@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- babel => compilation du JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class App extends React.Component{
+            constructor(props){
+                super(props);
+                this.state = {
+                    price : 100,
+                    percentage : 0
+                }
+            }
+
+            componentDidMount(){
+                // 30 % d'augmentation
+
+                // une première augmentation de 20%
+                //this.setState({percentage : 0.2});
+                // On force le changement d'état de la variable dans le state de manière synchrone
+                // Attention à utiliser la variable state pour faire la mise à jour du state
+                this.setState((state, props) => ({percentage : 0.2 }) );
+
+                // une augmentatio de 0.05 en plus : 25 %
+                // this.setState({percentage : this.state.percentage + 0.05 });
+                this.setState((state, props) => ( {percentage : 0.05 + state.percentage } ) );
+
+                // une augmentatio de 0.05 en plus : 30 %
+                // this.setState({percentage : this.state.percentage + 0.05 });
+                this.setState((state, props) => ({percentage : 0.05 + state.percentage }) );
+
+            }
+
+            render(){
+                // React.Fragment est wrapper virtuel permet de ne pas créer un div inutile ...
+                return (
+                    <React.Fragment>
+                        <h1>Calcul du pourcentage </h1>
+                        <p>Prix : {this.state.price}</p>
+                        <p>Tax : {this.state.percentage} </p>
+                        <Price 
+                            price={this.state.price} 
+                            percentage={this.state.percentage} 
+                        />
+                    </React.Fragment>
+                );
+                
+            }
+        }
+
+        class Price extends React.Component{
+            constructor(props){
+                super(props);
+                this.state = {
+                    total : 0
+                }
+            }
+
+            componentDidMount(){
+                            // On calcule le total TTC en fonction des 30 %
+                //this.setState({ total :  this.props.price * ( this.props.percentage + 1 )  });
+
+               this.setState((state, props) => ({total : this.props.price * ( props.percentage + 1 ) }) );
+               // 100 * 1.3 = 130
+
+                // on applique encore une augmentation de 30 % sur le nouveau total
+                //this.setState({ total : (this.state.total + 200) * ( this.props.percentage + 1 )  });
+
+                this.setState((state, props) => ({total : (state.total + 200) * ( props.percentage + 1 ) }) );
+                // (100 * 1.3 + 200) * 1.3 
+
+                // on applique encore une augmentation de 30 % sur le nouveau total
+                //this.setState({ total : (this.state.total + 50) * ( this.props.percentage + 1 )  });
+
+                this.setState((state, props) => ({total : (state.total + 50) * ( props.percentage + 1 ) }) );
+                // ( (100 * 1.3 + 200) * 1.3 + 50 ) * 1.3 = 622.7
+
+            }
+
+            render(){
+
+                const { total } = this.state;
+                const { percentage } = this.props;
+
+                return (
+                    <React.Fragment>
+                        <p>Price pourcentage : {total} </p>
+                        <p>Percentage : {percentage}</p>
+                    </React.Fragment>
+                )
+            }
+        }
+        
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
