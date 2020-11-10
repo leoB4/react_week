@@ -20,7 +20,7 @@
     <div id="root"></div>
     <script type="text/babel">
 
-        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
         
         class Line extends React.Component {
             constructor(props) {
@@ -39,9 +39,7 @@
 
             componentDidUpdate(prevProps, prevStates){
                 if( this.props.life != prevProps.life ){
-                    if(this.props.life === true){
-                        this.showStar();
-                    } 
+                    this.showStar();
                 }
             }
 
@@ -78,7 +76,7 @@
 
             componentDidMount() {
               const interval = setInterval(()=>{
-                if( this.state.count == 10 ){
+                if( this.state.count == 20 ){
                     clearInterval(interval);
                 }else{
                     this.setState({
