@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- babel => compilation du JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class Counter extends React.Component {
+
+            constructor(props) {
+                super(props);
+
+                this.state = {
+                    count : 0,
+                    isClicked : false
+                }
+
+                this.start = this.start.bind(this);
+                this.stop = this.stop.bind(this);
+                this.reset = this.reset.bind(this);
+
+                this.interval = null;
+            }
+
+            start() {
+
+                clearInterval(this.interval);
+
+                this.setState({ isClicked : true});
+
+                this.interval = setInterval(() =>{
+                    if(this.state.count >= this.props.maxCount) {
+                        this.reset();
+                        return;
+                    }
+
+                    this.setState({
+                        count : (this.state.count + this.props.step)
+                    })
+                }, 1000);
+            }
+
+            reset(){
+                clearInterval(this.interval);
+                this.setState({ count : 0, isClicked : false});
+            }
+
+            stop() {
+                clearInterval(this.interval);
+                this.setState({ isClicked : false});
+            }
+
+            render() {
+                const { count, isCliked } = this.state;
+                const { step } = this.props;
+
+                return (
+                    <div>
+                        <button onClick={this.start} disabled={isClicked}>
+                            Start + { step } 
+                        </button>
+                        <button onClick={this.stop} disabled={!isCliked}>
+                            Stop
+                        </button>
+                       
+                        <button onClick={this.reset}>
+                           Reset 
+                        </button>
+                        <div>{count}</div>
+                    </div>
+                );
+            }
+
+
+        }
+        
+        class App extends React.Component {
+            render() {
+
+                return (
+                    <div>
+                        <Counter step={1} max={20} />
+                    </div>
+                )
+            }
+          
+        }
+
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
