@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- babel => compilation du JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class App extends React.Component {
+
+            render() {
+                
+                return (
+                    <Form />
+                )
+            }
+        }
+
+        class Form extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = { 
+                    number: '', 
+                    multiples : [],
+                    message : '',
+                };
+
+                this.handleChange = this.handleChange.bind(this);
+                this.handleSubmit = this.handleSubmit.bind(this);
+            }
+
+            handleChange(event) {
+                const { value : number } = event.target;
+
+                this.setState({ 
+                    number : number,
+                    message : '',
+                    multiples : []
+                });
+            }
+
+            handleSubmit(event) {
+                event.preventDefault();
+
+                const { number } = this.state;
+
+                if( number.trim() === '' ){
+                    this.setState({ message : `vide`});
+
+                    return;
+                }
+
+                if( parseInt(number) > 100 ){
+                    this.setState({ message : `plus grand que 100`});
+
+                    return;
+                }
+
+                let multiple = number;
+                this.state.multiples.push(number);
+
+                for (let i = 2;  i < 100 ; i++) {
+                    multiple = i * number;
+
+                    if( multiple > 100) break;
+
+                    this.state.multiples.push(multiple);
+                }
+
+                this.setState({ multiples : this.state.multiples });
+            }
+
+            render() {
+                const { number, message, multiples } = this.state;
+
+                return (
+                    <React.Fragment>
+                        {  message && <p>{message}</p> }
+                        <form onSubmit={this.handleSubmit}>
+                            <label>
+                                nombre inférieur à 100 :
+                                <input type="text" value={number} onChange={this.handleChange} />
+                            </label>
+                            <input type="submit" value="Calc" />
+                        </form>
+                        { multiples.length > 0 && (
+                            <ul>
+                                {multiples.map((num, i) => (<li key={i}>{num}</li>))}
+                            </ul>
+                        ) }
+                    </React.Fragment>
+                );
+            }
+        }
+                
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
