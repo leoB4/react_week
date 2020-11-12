@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Hello React</title>
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <!-- babel => compilation du JSX -->
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <style>
+        .heading{
+            color: purple;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+
+        class App extends React.Component {
+
+            constructor(props) {
+                super(props);
+                this.state = { 
+                    decimal : '',
+                    binary : '',
+                    message : ''
+                };
+
+                this.handleChange = this.handleChange.bind(this);
+            }
+
+            conversion(num, b1, b2){
+
+                return num == '' ? '' : parseInt(num, b1).toString(b2) ;
+            }
+
+            handleChange(v, b){
+
+                if( v!='' && parseInt(v) != v ){
+
+                    this.setState({
+                        message : "Attention, ce n'est pas un entier !"
+                    });
+
+                    return
+                }
+                if( b === 'binary' && /[2-9]/.test(v) ){
+
+                    this.setState({
+                        message : `Attention, ce nombre : ${v} n'est pas un binaire !`
+                    });
+
+                    return;
+                }
+                if(b === 'decimal' && /^0\d+/.test(v) ){
+                    this.setState({
+                        message : `Attention dans la base ${b} le nombre ${v} n'est pas valide`
+                    });
+
+                    return;
+                }
+
+                if(b === 'decimal')
+                    this.setState({ 
+                        decimal : v, 
+                        binary : this.conversion(v, 10, 2),
+                        message : ''
+                    });
+
+                if(b === 'binary')
+                    this.setState({ 
+                        decimal : this.conversion(v, 2, 10), 
+                        binary :  v,
+                        message : ''
+                    });
+            }
+
+            render() {
+
+                const { decimal, binary, message } = this.state;
+                
+                return (
+                    <React.Fragment>
+                        { message && <p>{message}</p>}
+                        <BaseNumberInput 
+                            onChangeBase={ (v, b) => this.handleChange(v, b)} 
+                            number={decimal}
+                            base="decimal"
+                        />
+                        <BaseNumberInput 
+                            onChangeBase={ (v, b) => this.handleChange(v, b)} 
+                            number={binary}
+                            base="binary"
+                        />
+                    </React.Fragment>
+                )
+            }
+        }
+
+        class BaseNumberInput extends React.Component {
+            constructor(props) {
+                super(props);
+
+                this.handleChange = this.handleChange.bind(this);
+            }
+
+            handleChange(event) {
+                const { value, name } = event.target;
+                this.props.onChangeBase(value, name);
+            }
+
+            render() {
+
+                const { number, base } = this.props;
+
+                return (
+                    <React.Fragment>
+                        <h2>Base:{base}</h2>
+                        <input 
+                            type="text" 
+                            name={base} 
+                            value={number} 
+                            onChange={this.handleChange} 
+                        />
+                    </React.Fragment>
+                );
+            }
+        }
+                
+        ReactDOM.render(
+            <App />,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
